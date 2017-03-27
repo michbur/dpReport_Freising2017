@@ -10,18 +10,18 @@
 \usepackage{colortbl, xcolor}
 
 
-\title{dpcReport: the coolest tool ever}
+\title{dpcReport: web server and software suite for unified analysis of digital PCRs and digital assays }
 \date{}
-\author{Micha\l{} Burdukiewicz\inst{1}, 
+\author{\scriptsize{Micha\l{} Burdukiewicz\inst{1}, 
 Jim Huggett\inst{2},
 Alexandra Whale\inst{2},
 Piotr Sobczyk\inst{3}, 
 Pawe\l{} Mackiewicz\inst{1},
 Andrej-Nikolai Spiess\inst{3},
 Peter Schierack\inst{5},
-and Stefan R\"{o}diger\inst{5}}
+and Stefan R\"{o}diger\inst{5}}}
 
-\institute{\footnotesize{\textsuperscript{1}University of Wroc\l{}aw, Department of Genomics, 
+\institute{\tiny{\textsuperscript{1}University of Wroc\l{}aw, Department of Genomics, 
 
 \textsuperscript{2}Molecular and Cell Biology Team, LGC, Teddington, United Kingdom,
 
@@ -51,13 +51,28 @@ library(biogram)
 @
   
 % every rapidly emergining technique is accompanied by influx of the software
-
+Words, words
 
 \end{frame}
   
+\section{Aim} 
+
+\begin{frame}{Aim}
+
+Create framework for dPCR data analysis:
+\begin{itemize}[<+(1)->]
+\item tailored for the most common tasks, 
+%(comparison of multiple experiments and quality control),
+\item unified,
+\item reproducible.
+\end{itemize}
+
+\end{frame}
+
+
 \section{Reproducibility}
 
-\begin{frame}{}
+\begin{frame}{Reproducibility}
 
 Scientific software supports reproducibility, otherwise it is not scientific.
 
