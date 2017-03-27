@@ -1,0 +1,179 @@
+\documentclass{beamer}
+\usetheme{metropolis}
+\usepackage[utf8]{inputenc}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{natbib}
+\usepackage{graphicx}
+\usepackage{array,booktabs,tabularx}
+\usepackage{epstopdf}
+\usepackage{colortbl, xcolor}
+
+
+\title{dpcReport: the coolest tool ever}
+\date{}
+\author{Micha\l{} Burdukiewicz\inst{1}, 
+Jim Huggett\inst{2},
+Alexandra Whale\inst{2},
+Piotr Sobczyk\inst{3}, 
+Pawe\l{} Mackiewicz\inst{1},
+Andrej-Nikolai Spiess\inst{3},
+Peter Schierack\inst{5},
+and Stefan R\"{o}diger\inst{5}}
+
+\institute{\footnotesize{\textsuperscript{1}University of Wroc\l{}aw, Department of Genomics, 
+
+\textsuperscript{2}Molecular and Cell Biology Team, LGC, Teddington, United Kingdom,
+
+\textsuperscript{3}Wroc\l{}aw University of Science and Technology, Faculty of Pure and Applied Mathematics,
+
+\textsuperscript{4}University Medical Center Hamburg-Eppendorf, Hamburg, Germany,
+
+\textsuperscript{5}Brandenburg University of Technology Cottbus-Senftenberg, Institute of Biotechnology 
+}}
+
+\begin{document}
+  \maketitle
+  
+  \tableofcontents
+  
+  \section{dPCR software}
+  
+  \begin{frame}{}
+  <<knitrIntro, echo = FALSE, message=FALSE,warning=FALSE>>=
+source("my_ggplot_theme.R")
+
+library(dplyr)
+library(reshape2)
+library(xtable)
+library(biogram)
+
+@
+  
+% every rapidly emergining technique is accompanied by influx of the software
+
+
+\end{frame}
+  
+\section{Reproducibility}
+
+\begin{frame}{}
+
+Scientific software supports reproducibility, otherwise it is not scientific.
+
+A report must contain enough information to allow the full reproduction of the conducted analysis.
+
+\end{frame}
+
+
+\begin{frame}{Reports}
+\begin{figure} 
+\includegraphics[width=0.95\textwidth]{static_figure/dcpReport_reprod1.png}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}{Date and time}
+\begin{figure} 
+\includegraphics[width=0.95\textwidth]{static_figure/dcpReport_reprod2.png}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}{Input file name}
+\begin{figure} 
+\includegraphics[width=0.95\textwidth]{static_figure/dcpReport_reprod3.png}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}{Input file checksum}
+\begin{figure} 
+\includegraphics[width=0.95\textwidth]{static_figure/dcpReport_reprod4.png}
+\end{figure}
+
+Changes in case of the manual alteration of the input file.
+
+\end{frame}
+
+
+\begin{frame}{Manual alterations inside dpcReport}
+\begin{figure} 
+\includegraphics[width=0.95\textwidth]{static_figure/dcpReport_reprod5.png}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}{R Session}
+\begin{figure} 
+\includegraphics[width=0.95\textwidth]{static_figure/dcpReport_reprod6.png}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}{Reproducibility of the workflow}
+
+An analysis conducted in a GUI-based software, as \textit{dpcReport}, is more challenging to reproduce.
+
+dpcReport exports all steps of the analysis, including parameters adjusted manually by the user, in form of the \textbf{R} code that recreates the whole workflow.
+
+\end{frame}
+
+\begin{frame}{Reproducibility of the workflow}
+\begin{figure} 
+\includegraphics[width=0.95\textwidth]{static_figure/dcpReport_reprod7.png}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}{Summary}
+\textit{dpcReport} is the integrted environment for the analysis of dPCR data.
+\end{frame}
+
+
+\begin{frame}{Availability}
+
+Web server:
+\url{www.smorfland.uni.wroc.pl/shiny/dpcReport}
+
+R package (including your local instance of dpcReport):
+\url{www.github.com/michbur/dpcR}
+
+\end{frame}
+
+\begin{frame}{Acknowledgements and funding}
+
+This research was partially funded by the KNOW Consortium and National Science Center (2015/17/N/NZ2/01845).
+
+\small{
+\begin{itemize}
+\item Małgorzata Kotulska.
+\item Paweł Mackiewicz,
+\item Stefan R\"{o}diger,
+\item \textbf{biogram} package (\url{https://cran.r-project.org/package=biogram}):
+\begin{itemize}
+\small
+\item Piotr Sobczyk,
+\item Chris Lauber,
+\end{itemize}
+
+\item \textbf{AmyLoad} database (\url{comprec-lin.iiar.pwr.edu.pl/amyload}):
+\begin{itemize}
+\small
+\item Paweł Woźniak,
+\end{itemize}
+\end{itemize}
+}
+
+\end{frame}
+
+
+
+\begin{frame}[allowframebreaks]
+        \frametitle{References}
+  \bibliographystyle{apalike}
+  \bibliography{references}
+\end{frame}  
+
+
+\end{document}
