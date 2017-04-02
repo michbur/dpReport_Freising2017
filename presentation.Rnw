@@ -54,7 +54,24 @@ library(biogram)
 Words, words
 
 \end{frame}
+
+
+\begin{frame}{Vendor-provided dPCR software}
+
+\end{frame}
   
+  
+\begin{frame}{Other dPCR software}
+
+\begin{itemize}
+\item definetherain
+%(comparison of multiple experiments and quality control),
+\item dpcr package,
+\item twodpcr package
+\end{itemize}
+
+\end{frame}
+
 \section{Aim} 
 
 \begin{frame}{Aim}
@@ -66,6 +83,26 @@ Create framework for dPCR data analysis:
 \item unified,
 \item reproducible.
 \end{itemize}
+
+\end{frame}
+
+\section{Methods}
+
+\begin{frame}{Multiple comparison}
+
+Uniformly most powerful test
+
+\end{frame}
+
+
+\begin{frame}{Multiple comparison}
+
+Confidence intervals
+
+\end{frame}
+
+\begin{frame}{Array quality control}
+
 
 \end{frame}
 
