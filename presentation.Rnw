@@ -74,9 +74,9 @@ Create framework for dPCR data analysis:
 
 \begin{frame}{Reproducibility}
 
-Scientific software supports reproducibility, otherwise it is not scientific.
+Scientific software must support reproducibility, otherwise it is not scientific.
 
-A report must contain enough information to allow the full reproduction of the conducted analysis.
+A report should contain enough information to allow the full reproduction of the conducted analysis.
 
 \end{frame}
 
