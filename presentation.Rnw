@@ -9,7 +9,6 @@
 \usepackage{epstopdf}
 \usepackage{colortbl, xcolor}
 
-
 \title{dpcReport: web server and software suite for unified analysis of digital PCRs and digital assays }
 \date{}
 \author{\scriptsize{Micha\l{} Burdukiewicz\inst{1}, 
@@ -70,8 +69,19 @@ Number of publications with words "digital PCR" or "dPCR" in the title/abstract.
 \begin{frame}{dPCR-related publications}
 <<echo = FALSE, message=FALSE,warning=FALSE,fig.height = 4>>=
 
-ggplot(pub_dat, aes(x = year, y = value, fill = variable)) +
-  geom_bar(stat = "identity", position = "dodge") +
+pub_dat_cum <- lapply(c("Observed", "Predicted"), function(ith_var)
+  lapply(unique(pub_dat[["year"]]), function(ith_year) {
+    n_times <- filter(pub_dat, year == ith_year, variable == ith_var)[["value"]]
+    if(n_times > 0) {
+      data.frame(year = ith_year, variable = rep(ith_var, n_times))
+    } else {
+      data.frame(year = NULL, variable = NULL)
+    }
+})) %>% unlist(recursive = FALSE) %>% 
+  do.call(rbind, .)
+
+ggplot(pub_dat_cum, aes(x = year, fill = variable)) +
+  geom_bar(position = "dodge") +
   scale_y_continuous("Number of publications") +
   scale_x_continuous("Year") +
   scale_fill_manual("", values = c("blue", "green")) +
@@ -84,18 +94,50 @@ ggplot(pub_dat, aes(x = year, y = value, fill = variable)) +
 
 
 \begin{frame}{Vendor-provided dPCR software}
-
 % every rapidly emergining technique is accompanied by influx of the software
+
+Graphical user interfaces:
+\begin{itemize}
+\item QuantaSoft\textsuperscript{TM} (Biorad),
+\item OpenArray\textsuperscript{\textregistered} Digital PCR Software (Thermo Fisher),
+\item Digital PCR Analysis software (Fluidigm).
+\end{itemize}
+
 \end{frame}
-  
-  
+
+\begin{frame}{Vendor-provided dPCR software}
+
+Graphical user interfaces:
+\begin{itemize}
+\item QuantaSoft\textsuperscript{TM} (Biorad),
+\item OpenArray\textsuperscript{\textregistered} Digital PCR Software (Thermo Fisher),
+\item Digital PCR Analysis software (Fluidigm).
+\end{itemize}
+
+Closed-source software tied only to the vendor-specific data format.
+
+
+\end{frame}
+
 \begin{frame}{Other dPCR software}
 
+Scripts and smaller tools tied to very specific task:
 \begin{itemize}
-\item definetherain
-%(comparison of multiple experiments and quality control),
-\item dpcr package,
-\item twodpcr package
+\item \textbf{Mathematica} \citep{strain_highly_2013-1},
+\item \textbf{MS EXCEL} \citep{dobnik_multiplex_2015},
+\item \textbf{R} \citep{dreo_optimising_2014, trypsteen_ddpcrquant:_2015, dorazio_statistical_2015, vynck_flexible_2016}.
+\end{itemize}
+
+\textbf{R}: a software environment and a programming language \citep{r_core_team_r:_2016}, extensively used in bioinformatics and biostatistics.
+
+\end{frame}
+
+\begin{frame}{Other dPCR software}
+Web servers (limited to published web servers):
+
+\begin{itemize}
+\item definetherain \citep{jones_low_2014},
+\item ddpcr \citep{attali_ddpcr:_2016} (also the \textbf{R} package),
 \end{itemize}
 
 \end{frame}
@@ -104,15 +146,35 @@ ggplot(pub_dat, aes(x = year, y = value, fill = variable)) +
 
 \begin{frame}{Aim}
 
+\begin{table}
+\centering
+\begin{tabular}{|l|l|}
+\hline
+Existing software                                                                            & Desired software      \\ \hline
+\begin{tabular}[c]{@{}l@{}}closed-source (vendors), \\ open-source (scientific)\end{tabular} & open-source             \\ \hline
+partially reproducible                                                                       & fully reproducible      \\ \hline
+tied to a specific platform                                                                  & multi-platform          \\ \hline
+solving a specific problem                                                                   & focused on common tasks \\ \hline
+scattered                                                                                    & integrated              \\ \hline
+\end{tabular}
+\end{table}
+
+\end{frame}
+
+
+\begin{frame}{Aim}
+
 Create framework for dPCR data analysis:
 \begin{itemize}[<+(1)->]
 \item tailored for the most common tasks, 
 %(comparison of multiple experiments and quality control),
+\item universal,
 \item unified,
 \item reproducible.
 \end{itemize}
 
 \end{frame}
+
 
 \section{Methods}
 
@@ -227,8 +289,8 @@ This research was partially funded by the KNOW Consortium Wroc\l{}aw Center for 
 
 \small{
 \begin{itemize}
-\item Stefan R\"{o}diger,
-\item Boris Fehse.
+\item Jim Hugget and Alexandra Whale.
+\item Stefan R\"{o}diger.
 \end{itemize}
 }
 
