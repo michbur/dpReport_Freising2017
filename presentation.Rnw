@@ -35,12 +35,14 @@ and Stefan R\"{o}diger\inst{5}}}
 \begin{document}
   \maketitle
   
+  \begin{frame}{Outline}
   \tableofcontents
+  \end{frame}
   
   \section{dPCR software}
   
-  \begin{frame}{}
-  <<knitrIntro, echo = FALSE, message=FALSE,warning=FALSE>>=
+\begin{frame}{dPCR-related publications}
+<<knitrIntro, echo = FALSE, message=FALSE,warning=FALSE,fig.height = 4>>=
 source("my_ggplot_theme.R")
 
 library(dplyr)
@@ -48,16 +50,42 @@ library(reshape2)
 library(xtable)
 library(biogram)
 
+pub_dat <- read.csv("./data/dpcr_final_data.csv")
+
+filter(pub_dat, variable == "Observed") %>% 
+  ggplot(aes(x = year, y = value)) +
+  geom_bar(stat = "identity", position = "dodge", fill = "blue") +
+  scale_y_continuous("Number of publications") +
+  scale_x_continuous("Year") +
+  my_theme
+
 @
   
-% every rapidly emergining technique is accompanied by influx of the software
-Words, words
 
+Number of publications with words "digital PCR" or "dPCR" in the title/abstract.
+
+\end{frame}
+
+
+\begin{frame}{dPCR-related publications}
+<<echo = FALSE, message=FALSE,warning=FALSE,fig.height = 4>>=
+
+ggplot(pub_dat, aes(x = year, y = value, fill = variable)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  scale_y_continuous("Number of publications") +
+  scale_x_continuous("Year") +
+  scale_fill_manual("", values = c("blue", "green")) +
+  my_theme
+
+@
+  
+541 expected publications in 2017.
 \end{frame}
 
 
 \begin{frame}{Vendor-provided dPCR software}
 
+% every rapidly emergining technique is accompanied by influx of the software
 \end{frame}
   
   
@@ -195,25 +223,12 @@ R package (including your local instance of dpcReport):
 
 \begin{frame}{Acknowledgements and funding}
 
-This research was partially funded by the KNOW Consortium and National Science Center (2015/17/N/NZ2/01845).
+This research was partially funded by the KNOW Consortium Wroc\l{}aw Center for Biotechnology, National Science Center (2015/17/N/NZ2/01845) and COST action "Harmonising standardisation strategies to increase efficiency and competitiveness of European life-science research".
 
 \small{
 \begin{itemize}
-\item Małgorzata Kotulska.
-\item Paweł Mackiewicz,
 \item Stefan R\"{o}diger,
-\item \textbf{biogram} package (\url{https://cran.r-project.org/package=biogram}):
-\begin{itemize}
-\small
-\item Piotr Sobczyk,
-\item Chris Lauber,
-\end{itemize}
-
-\item \textbf{AmyLoad} database (\url{comprec-lin.iiar.pwr.edu.pl/amyload}):
-\begin{itemize}
-\small
-\item Paweł Woźniak,
-\end{itemize}
+\item Boris Fehse.
 \end{itemize}
 }
 

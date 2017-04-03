@@ -17,4 +17,6 @@ data.frame(title = c(title1, title2), year = c(year1, year2)) %>%
   geom_bar()
 
 
-tmp <- data.frame(title = c(title1, title2), year = c(year1, year2))
+year_plot <- data.frame(year = c(year1, year2))
+
+ggplot(year_plot, aes(x = year)) + geom_bar()
