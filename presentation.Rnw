@@ -10,6 +10,9 @@
 \usepackage{colortbl, xcolor}
 \usepackage{verbatim}
 
+\definecolor{my_orange}{RGB}{255, 165, 122}
+\definecolor{my_blue}{RGB}{100, 149, 237}
+
 \title{dpcReport: web server and software suite for unified analysis of digital PCRs and digital assays }
 \date{}
 \author{\scriptsize{Micha\l{} Burdukiewicz\inst{1}, 
@@ -248,49 +251,157 @@ knitr::kable(tmp_dat)
 
 \end{frame}
 
-\begin{frame}{Multiple comparison}
+\begin{frame}{Comparison of multiple runs}
 
-The most common task for dPCR is comparison of multiple reactions.
+dPCR was used in absolute quantification of levels of biomarker X in 4 patients.
 
 <<echo = FALSE, message=FALSE,warning=FALSE,fig.height = 4>>=
+ks <- c(15, 14, 29, 32)
+ex_df <- data.frame(id = paste0("P", 1L:4),
+                    k = ks,
+                    conc = dpcR:::fl(ks/765),
+                    status = c(rep("control", 2), rep("cancer", 2)))
+
+ggplot(ex_df, aes(x = id, y = k, fill = status, label = k)) +
+  geom_bar(stat = "identity") +
+  geom_text(vjust = 2) +
+  scale_fill_manual("Patient status", values = c("orange1", "cornflowerblue")) +
+  scale_x_discrete("Patient ID") +
+  #scale_y_continuous("Concentration of a biomarker X") +
+  scale_y_continuous("Number of positive partitions") +
+  my_theme
+
+@
+
+The number of partitions is constant and equal to 765.
+
+\end{frame}
+
+
+\begin{frame}{Comparison of multiple runs}
+
+Are concentrations of biomarker X significantly different between patients?
+
+<<echo = FALSE, message=FALSE,warning=FALSE,fig.height = 4,results='asis'>>=
 generate_dat <- function(k) {
   k_len <- length(k)
   data.frame(experiment = paste0("Experiment", 1L:k_len), 
-           replicate = rep(1, k_len),
-           assay = rep("MYC", k_len),
-           k = k,
-           n = rep(765, k_len),
-           threshold = 1,
-           v = rep(1, k_len),
-           uv = rep(0, k_len)) %>% df2dpcr
+             replicate = rep(1, k_len),
+             assay = rep("MYC", k_len),
+             k = k,
+             n = rep(765, k_len),
+             threshold = 1,
+             v = rep(1, k_len),
+             uv = rep(0, k_len)) %>% df2dpcr
 }
 
-c(15, 29) %>% generate_dat  %>% test_counts()
-c(15, 15, 29, 29) %>% generate_dat  %>% test_counts()
+
+#ks %>% generate_dat  %>% test_counts() %>% slot("test_res")
+single_cmp <- data.frame(cbind(rbind(c(15, 14) %>% generate_dat  %>% test_counts() %>% slot("test_res"),
+                                     c(15, 29) %>% generate_dat  %>% test_counts() %>% slot("test_res"),
+                                     c(15, 32) %>% generate_dat  %>% test_counts() %>% slot("test_res"),
+                                     c(29, 15) %>% generate_dat  %>% test_counts() %>% slot("test_res"),
+                                     c(32, 15) %>% generate_dat  %>% test_counts() %>% slot("test_res"),
+                                     c(32, 29) %>% generate_dat  %>% test_counts() %>% slot("test_res")),
+                               k1 = c(15, 15, 15, 29, 32, 32), k2 = c(14, 29, 32, 15, 15, 29))) %>% 
+  mutate(nice_p_value = formatC(p_value, format = "f"),
+         k1 = ifelse(k1 %in% c(14, 15), 
+                     paste0("\\textcolor{my_orange}{", k1, "}"),
+                     paste0("\\textcolor{my_blue}{", k1, "}")),
+         k2 = ifelse(k2 %in% c(14, 15), 
+                     paste0("\\textcolor{my_orange}{", k2, "}"),
+                     paste0("\\textcolor{my_blue}{", k2, "}"))) %>% 
+  mutate(nice_p_value = ifelse(p_value < 0.05, paste0("\\textcolor{red}{", nice_p_value, "}"), nice_p_value))
+rownames(single_cmp) <- NULL
+colnames(single_cmp)[2L:4] <- c("k_1", "k_2", "p-value")
+print(xtable(single_cmp[-1], digits = 0), 
+      include.rownames = FALSE,
+      sanitize.text.function = function(x) x)
+
+
 @
 
 
-\end{frame}
-
-
-\begin{frame}{Multiple comparison}
-
-Uniformly most powerful test
 
 \end{frame}
 
 
 \begin{frame}{Multiple comparison}
 
-Confidence intervals
+<<echo = FALSE, message=FALSE,warning=FALSE,fig.height = 4>>=
+data.frame(n_cmp = 1L:6) %>% 
+  mutate(prob = 1 - 0.95^n_cmp,
+         n_cmp = factor(n_cmp)) %>% 
+  ggplot(aes(x = n_cmp, y = prob)) +
+  geom_bar(stat = "identity") +
+  scale_x_discrete("Number of comparisons") +
+  scale_y_continuous("Type I error probability\n(significance level 0.05)", breaks = c(1L:3/4, 0.95)) +
+  my_theme
+@
+
+
+Multiple comparison problem: the more comparisons, the higher change of making the type I error.
 
 \end{frame}
 
-\begin{frame}{Array quality control}
+\begin{frame}{Comparison of multiple runs}
+Solution: False Discovery Rate~\citep{benjamini_controlling_1995} (correction for multiple comparisons).
 
+<<echo = FALSE, message=FALSE,warning=FALSE,fig.height = 4,results='asis'>>=
+multi_cmp <- ks %>% generate_dat  %>% test_counts() %>% slot("test_res")
+multi_cmp <- ks %>% generate_dat  %>% test_counts() %>% slot("test_res") %>% 
+  cbind(., k1 = c(15, 15, 15, 29, 32, 32), 
+        k2 = c(14, 29, 32, 15, 15, 29)) %>% 
+  data.frame() %>% 
+  mutate(nice_p_value = formatC(p_value, format = "f"),
+         k1 = ifelse(k1 %in% c(14, 15), 
+                     paste0("\\textcolor{my_orange}{", k1, "}"),
+                     paste0("\\textcolor{my_blue}{", k1, "}")),
+         k2 = ifelse(k2 %in% c(14, 15), 
+                     paste0("\\textcolor{my_orange}{", k2, "}"),
+                     paste0("\\textcolor{my_blue}{", k2, "}"))) %>% 
+  mutate(nice_p_value = ifelse(p_value < 0.05, paste0("\\textcolor{red}{", nice_p_value, "}"), nice_p_value))
+
+colnames(multi_cmp)[2L:4] <- c("k_1", "k_2", "p-value")
+
+print(xtable(multi_cmp[-1], digits = 0), 
+      include.rownames = FALSE,
+      sanitize.text.function = function(x) x)
+@
+
+Comparison of multiple runs is one of the most common and crucial tasks in dPCR, but no software does that for you.
 
 \end{frame}
 
+
+\begin{frame}{Comparison of multiple runs}
+Multiple comparison problem affects also confidence intervals when they are used for testing.
+
+<<echo = FALSE, message=FALSE,warning=FALSE,fig.height = 4,results='asis'>>=
+multi_cmp <- ks %>% generate_dat  %>% test_counts() %>% slot("test_res")
+multi_cmp <- ks %>% generate_dat  %>% test_counts() %>% slot("test_res") %>% 
+  cbind(., k1 = c(15, 15, 15, 29, 32, 32), 
+        k2 = c(14, 29, 32, 15, 15, 29)) %>% 
+  data.frame() %>% 
+  mutate(nice_p_value = formatC(p_value, format = "f"),
+         k1 = ifelse(k1 %in% c(14, 15), 
+                     paste0("\\textcolor{my_orange}{", k1, "}"),
+                     paste0("\\textcolor{my_blue}{", k1, "}")),
+         k2 = ifelse(k2 %in% c(14, 15), 
+                     paste0("\\textcolor{my_orange}{", k2, "}"),
+                     paste0("\\textcolor{my_blue}{", k2, "}"))) %>% 
+  mutate(nice_p_value = ifelse(p_value < 0.05, paste0("\\textcolor{red}{", nice_p_value, "}"), nice_p_value))
+
+colnames(multi_cmp)[2L:4] <- c("k_1", "k_2", "p-value")
+
+print(xtable(multi_cmp[-1], digits = 0), 
+      include.rownames = FALSE,
+      sanitize.text.function = function(x) x)
+@
+
+\cite{burdukiewicz_methods_2016}
+
+\end{frame}
 
 \section{Reproducibility}
 
