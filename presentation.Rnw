@@ -8,6 +8,7 @@
 \usepackage{array,booktabs,tabularx}
 \usepackage{epstopdf}
 \usepackage{colortbl, xcolor}
+\usepackage{verbatim}
 
 \title{dpcReport: web server and software suite for unified analysis of digital PCRs and digital assays }
 \date{}
@@ -47,7 +48,7 @@ source("my_ggplot_theme.R")
 library(dplyr)
 library(reshape2)
 library(xtable)
-library(biogram)
+library(dpcR)
 
 pub_dat <- read.csv("./data/dpcr_final_data.csv")
 
@@ -164,19 +165,113 @@ scattered                                                                       
 
 \begin{frame}{Aim}
 
-Create framework for dPCR data analysis:
-\begin{itemize}[<+(1)->]
-\item tailored for the most common tasks, 
-%(comparison of multiple experiments and quality control),
-\item universal,
-\item unified,
-\item reproducible.
+\begin{table}
+\centering
+\begin{tabular}{|l|l|}
+\hline
+Existing software                                                                            &  \textcolor{blue}{dpcReport}     \\ \hline
+\begin{tabular}[c]{@{}l@{}}closed-source (vendors), \\ open-source (scientific)\end{tabular} & open-source             \\ \hline
+partially reproducible                                                                       & fully reproducible      \\ \hline
+tied to a specific platform                                                                  & multi-platform          \\ \hline
+solving a specific problem                                                                   & focused on common tasks \\ \hline
+scattered                                                                                    & integrated              \\ \hline
+\end{tabular}
+\end{table}
+
+\end{frame}
+
+% \begin{frame}{Aim}
+% 
+% Create framework for dPCR data analysis:
+% \begin{itemize}[<+(1)->]
+% \item tailored for the most common tasks, 
+% %(comparison of multiple experiments and quality control),
+% \item universal,
+% \item unified,
+% \item reproducible.
+% \end{itemize}
+% 
+% \end{frame}
+
+\begin{frame}{dpcReport framework}
+\includegraphics[width=0.90\textwidth]{static_figure/dpcreport_workflow_full.eps}
+\end{frame}
+
+\begin{frame}{dpcReport framework}
+\includegraphics[width=0.90\textwidth]{static_figure/dpcreport_workflow_p1.eps}
+\end{frame}
+
+\begin{frame}{dpcReport framework}
+\includegraphics[width=0.90\textwidth]{static_figure/dpcreport_workflow_p2.eps}
+\end{frame}
+
+\begin{frame}{dpcReport framework}
+\includegraphics[width=0.90\textwidth]{static_figure/dpcreport_workflow_p3.eps}
+\end{frame}
+
+\begin{frame}{dpcReport framework}
+\includegraphics[width=0.90\textwidth]{static_figure/dpcreport_workflow_p4.eps}
+\end{frame}
+
+\begin{frame}{dpcReport framework}
+\includegraphics[width=0.90\textwidth]{static_figure/dpcreport_workflow_p5.eps}
+\end{frame}
+
+\section{Methods}
+
+\begin{frame}{Input file}
+
+There are no universal format for dPCR data. Each system provides output in a different format. File formats differ between systems provided by the same vendor (QX100 vs QX200).
+
+dpcReport supports analysis of data in following file formats:
+\begin{itemize}
+\item QX100 (Biorad),
+\item QX200 (Biorad),
+\item BioMark (Fluidigm).
 \end{itemize}
 
 \end{frame}
 
+\begin{frame}{REDF}
 
-\section{Methods}
+REDF (Raw Exchange Digital PCR format): universal and minimal format for dPCR data analysis.
+
+\footnotesize{
+<<echo = FALSE, message=FALSE,warning=FALSE,fig.height = 4>>=
+tmp_dat <- dpcr2df(six_panels) %>% 
+  mutate(replicate = as.numeric(as.character(replicate)),
+         panel_id = as.numeric(as.character(panel_id)))
+rownames(tmp_dat) <- NULL
+knitr::kable(tmp_dat)
+@
+}
+
+\end{frame}
+
+\begin{frame}{Multiple comparison}
+
+The most common task for dPCR is comparison of multiple reactions.
+
+<<echo = FALSE, message=FALSE,warning=FALSE,fig.height = 4>>=
+generate_dat <- function(k) {
+  k_len <- length(k)
+  data.frame(experiment = paste0("Experiment", 1L:k_len), 
+           replicate = rep(1, k_len),
+           assay = rep("MYC", k_len),
+           k = k,
+           n = rep(765, k_len),
+           threshold = 1,
+           v = rep(1, k_len),
+           uv = rep(0, k_len)) %>% df2dpcr
+}
+
+c(15, 29) %>% generate_dat  %>% test_counts()
+c(15, 15, 29, 29) %>% generate_dat  %>% test_counts()
+@
+
+
+\end{frame}
+
 
 \begin{frame}{Multiple comparison}
 
@@ -245,6 +340,10 @@ Changes in case of the manual alteration of the input file.
 \end{figure}
 \end{frame}
 
+\begin{frame}{R Session}
+dpcReport is based on the \textbf{R} package \textit{dpcR}. All functionalities of dpcReport, including table and figure generation, are affected by changes in \textbf{R} and \textit{dpcR}.
+
+\end{frame}
 
 \begin{frame}{R Session}
 \begin{figure} 
@@ -252,10 +351,18 @@ Changes in case of the manual alteration of the input file.
 \end{figure}
 \end{frame}
 
+\begin{frame}{Reproducibility of the workflow}
+
+An analysis conducted in a GUI-based software, as \textit{dpcReport}, is challenging to reproduce.
+
+\end{frame}
+
 
 \begin{frame}{Reproducibility of the workflow}
 
-An analysis conducted in a GUI-based software, as \textit{dpcReport}, is more challenging to reproduce.
+\begin{figure} 
+\includegraphics[width=0.55\textwidth]{static_figure/dcpReport_Rcode.png}
+\end{figure}
 
 dpcReport exports all steps of the analysis, including parameters adjusted manually by the user, in form of the \textbf{R} code that recreates the whole workflow.
 
@@ -269,30 +376,61 @@ dpcReport exports all steps of the analysis, including parameters adjusted manua
 
 
 \begin{frame}{Summary}
-\textit{dpcReport} is the integrted environment for the analysis of dPCR data.
+\textit{dpcReport} is an open-source, integrated software for the reproducible analysis of dPCR data.
+\end{frame}
+
+\begin{frame}{Getting started}
+Web server: \url{http://tinyurl.com/dpcReport2}.
+
+\begin{figure} 
+\includegraphics[width=0.85\textwidth]{static_figure/dcpReport_entry.png}
+\end{figure}
+
 \end{frame}
 
 
-\begin{frame}{Availability}
+\begin{frame}[fragile]{Getting started}
+Local instance: \url{https://github.com/michbur/dpcR}.
 
-Web server:
-\url{www.smorfland.uni.wroc.pl/shiny/dpcReport}
+\begin{verbatim}
 
-R package (including your local instance of dpcReport):
-\url{www.github.com/michbur/dpcR}
+install.packages("dpcR")
+library(dpcR)
+dpcReport()
+\end{verbatim}
 
 \end{frame}
 
 \begin{frame}{Acknowledgements and funding}
 
-This research was partially funded by the KNOW Consortium Wroc\l{}aw Center for Biotechnology, National Science Center (2015/17/N/NZ2/01845) and COST action "Harmonising standardisation strategies to increase efficiency and competitiveness of European life-science research".
-
 \small{
+Collaborators:
 \begin{itemize}
-\item Jim Hugget and Alexandra Whale.
-\item Stefan R\"{o}diger.
+\item Jim Hugget and Alexandra Whale (LGC).
+\item Boris Fehse (University of Hamburg).
+\item Mario Menschikowski (Technical University of Dresden).
+\item Stefan R\"{o}diger (Brandenburg Technical University).
+\end{itemize}
+
+Funders:
+\begin{itemize}
+\item KNOW Consortium Wroc\l{}aw Center for Biotechnology,
+\item National Science Center (2015/17/N/NZ2/01845),
+\item COST action "Harmonising standardisation strategies to increase efficiency and competitiveness of European life-science research".
 \end{itemize}
 }
+
+\end{frame}
+
+
+\begin{frame}{}
+Local instance: \url{https://github.com/michbur/dpcR}.
+
+Web server: \url{http://tinyurl.com/dpcReport2}.
+
+Slides: \url{http://tinyurl.com/dpcReport-Freising}.
+
+dpcReport and dpcR are part of pcRuniveRsum: \url{http://michbur.github.io/pcRuniveRsum/} - everything for PCR in \textbf{R}.
 
 \end{frame}
 
@@ -302,7 +440,7 @@ This research was partially funded by the KNOW Consortium Wroc\l{}aw Center for 
         \frametitle{References}
   \bibliographystyle{apalike}
   \bibliography{references}
-\end{frame}  
+\end{frame}
 
 
 \end{document}

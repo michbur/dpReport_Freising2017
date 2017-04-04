@@ -1,0 +1,10 @@
+\frametitle{Getting started}
+Local instance: \url{https://github.com/michbur/dpcR}.
+
+\begin{verbatim}
+
+install.packages("dpcR")
+library(dpcR)
+dpcReport()
+\end{verbatim}
+
