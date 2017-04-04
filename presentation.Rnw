@@ -196,6 +196,8 @@ scattered                                                                       
 % 
 % \end{frame}
 
+\section{dpcReport framework}
+
 \begin{frame}{dpcReport framework}
 \includegraphics[width=0.90\textwidth]{static_figure/dpcreport_workflow_full.eps}
 \end{frame}
@@ -219,8 +221,6 @@ scattered                                                                       
 \begin{frame}{dpcReport framework}
 \includegraphics[width=0.90\textwidth]{static_figure/dpcreport_workflow_p5.eps}
 \end{frame}
-
-\section{Methods}
 
 \begin{frame}{Input file}
 
@@ -335,12 +335,12 @@ data.frame(n_cmp = 1L:6) %>%
   ggplot(aes(x = n_cmp, y = prob)) +
   geom_bar(stat = "identity") +
   scale_x_discrete("Number of comparisons") +
-  scale_y_continuous("Type I error probability\n(significance level 0.05)", breaks = c(1L:3/4, 0.95)) +
+  scale_y_continuous("Type I error probability\n(significance level 0.05)", breaks = 0L:5/20) +
   my_theme
 @
 
 
-Multiple comparison problem: the more comparisons, the higher change of making the type I error.
+Multiple comparison problem: the more comparisons, the higher chance of the type I error (a rejection of a true null hypothesis).
 
 \end{frame}
 
@@ -369,34 +369,77 @@ print(xtable(multi_cmp[-1], digits = 0),
       sanitize.text.function = function(x) x)
 @
 
-Comparison of multiple runs is one of the most common and crucial tasks in dPCR, but no software does that for you.
+Comparison of multiple runs is one of the most common and crucial tasks in dPCR, but no software does that correctly for you.
 
 \end{frame}
 
 
 \begin{frame}{Comparison of multiple runs}
-Multiple comparison problem affects also confidence intervals when they are used for testing.
+Multiple comparison problem affects also confidence intervals when they are used for testing. 
 
+Aim of the study: how often the confidence interval of measured sample concentration covers the known sample concentration?
+
+\pause
+
+\begin{itemize}[<+->]
+\item Data: three replicates of five dillutions of the reference gene measured using QX100 machine.
+\item Methods: Bhat's confidence intervals~\citep{bhat_single_2009-1} and MRT confidence intervals~\citep{burdukiewicz_methods_2016}.
+\end{itemize}
+
+
+\end{frame}
+
+
+\begin{frame}{Comparison of multiple runs}
 <<echo = FALSE, message=FALSE,warning=FALSE,fig.height = 4,results='asis'>>=
-multi_cmp <- ks %>% generate_dat  %>% test_counts() %>% slot("test_res")
-multi_cmp <- ks %>% generate_dat  %>% test_counts() %>% slot("test_res") %>% 
-  cbind(., k1 = c(15, 15, 15, 29, 32, 32), 
-        k2 = c(14, 29, 32, 15, 15, 29)) %>% 
-  data.frame() %>% 
-  mutate(nice_p_value = formatC(p_value, format = "f"),
-         k1 = ifelse(k1 %in% c(14, 15), 
-                     paste0("\\textcolor{my_orange}{", k1, "}"),
-                     paste0("\\textcolor{my_blue}{", k1, "}")),
-         k2 = ifelse(k2 %in% c(14, 15), 
-                     paste0("\\textcolor{my_orange}{", k2, "}"),
-                     paste0("\\textcolor{my_blue}{", k2, "}"))) %>% 
-  mutate(nice_p_value = ifelse(p_value < 0.05, paste0("\\textcolor{red}{", nice_p_value, "}"), nice_p_value))
+library(ggplot2)
+library(reshape2)
+library(dplyr)
+library(latex2exp)
+library(grid)
+library(gridExtra)
+library(gtable)
 
-colnames(multi_cmp)[2L:4] <- c("k_1", "k_2", "p-value")
+real_data_CI <- read.csv("./data/real_data_CI.csv") %>% 
+  filter(experiment %in% c(0.05, 0.25, 0.5, 0.75, 1),
+         method != "Bhat") %>% 
+  mutate(experiment_nice = factor(as.character(experiment_nice), paste0(c(0.05, 0.25, 0.5, 0.75, 1)*100, "%")))
 
-print(xtable(multi_cmp[-1], digits = 0), 
-      include.rownames = FALSE,
-      sanitize.text.function = function(x) x)
+pp <- ggplot(real_data_CI, aes(x = replicate, y = lambda, ymax = lambda.up, ymin = lambda.low, color = covered)) +
+  geom_hline(aes(yintercept = real_value), color = "green", lwd = 1.1) +
+  geom_point() +
+  geom_errorbar(width = 0.5) +
+  scale_y_continuous(TeX("$\\lambda$")) +
+  scale_x_discrete("Replicate") + 
+  scale_color_manual(TeX("Confidence interval covers real value of $\\lambda$"),
+                     values = c("chocolate3", "skyblue3")) +
+  facet_grid(method ~ experiment_nice) + 
+  my_theme
+
+pp_grobs <- ggplotGrob(pp)
+
+pp_grobs <- gtable_add_cols(pp_grobs, unit(2, "lines"))
+pp_grobs <- gtable_add_grob(pp_grobs, 
+                            list(rectGrob(x = unit(0.25, "npc"),
+                                          gp = gpar(fill = "lightgrey", colour = "black"),
+                                          width = unit(0.5, "npc")),
+                                 textGrob("Method", x = unit(0.25, "npc"), rot = -90, 
+                                          gp = gpar(col = "black", fontsize = 11, fontface = "bold"))),
+                            t = 4, l = 16, r = 17, b = 10, name = paste(runif(2)))
+pp_grobs <- gtable_add_cols(pp_grobs, unit(1, "lines"))
+
+pp_grobs <- gtable_add_rows(pp_grobs, unit(2, "lines"), 2)
+pp_grobs <- gtable_add_grob(pp_grobs, 
+                            list(rectGrob(y = unit(0.25, "npc"),
+                                          gp = gpar(fill = "lightgrey", colour = "black"),
+                                          height = unit(0.5, "npc")),
+                                 textGrob("Dilution", y = unit(0.25, "npc"),
+                                          gp = gpar(col = "black", fontsize = 11, fontface = "bold"))),
+                            t = 3, l = 4, r = 14, b = 3, name = paste(runif(2)))
+
+grid.newpage()
+grid.draw(pp_grobs)
+
 @
 
 \cite{burdukiewicz_methods_2016}
