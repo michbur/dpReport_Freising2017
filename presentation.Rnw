@@ -39,7 +39,13 @@ and Stefan R\"{o}diger\inst{5}}}
   \maketitle
   
   \begin{frame}{Outline}
-  \tableofcontents
+  \begin{enumerate}
+  \item dPCR software.
+  \item Aim.
+  \item dpcReport framework.
+  \item Reproducibility.
+  \item Conclusions.
+  \end{enumerate}
   \end{frame}
   
   \section{dPCR software}
@@ -96,27 +102,17 @@ ggplot(pub_dat_cum, aes(x = year, fill = variable)) +
 541 expected publications in 2017.
 \end{frame}
 
-
 \begin{frame}{Vendor-provided dPCR software}
 % every rapidly emergining technique is accompanied by influx of the software
 
 Graphical user interfaces:
 \begin{itemize}
-\item QuantaSoft\textsuperscript{TM} (Biorad),
+\item QuantaSoft\textsuperscript{TM} (Bio-Rad),
 \item OpenArray\textsuperscript{\textregistered} Digital PCR Software (Thermo Fisher),
 \item Digital PCR Analysis software (Fluidigm).
 \end{itemize}
 
-\end{frame}
-
-\begin{frame}{Vendor-provided dPCR software}
-
-Graphical user interfaces:
-\begin{itemize}
-\item QuantaSoft\textsuperscript{TM} (Biorad),
-\item OpenArray\textsuperscript{\textregistered} Digital PCR Software (Thermo Fisher),
-\item Digital PCR Analysis software (Fluidigm).
-\end{itemize}
+\pause
 
 Closed-source software tied only to the vendor-specific data format.
 
@@ -131,6 +127,8 @@ Scripts and smaller tools tied to very specific task:
 \item \textbf{MS EXCEL} \citep{dobnik_multiplex_2015},
 \item \textbf{R} \citep{dreo_optimising_2014, trypsteen_ddpcrquant:_2015, dorazio_statistical_2015, vynck_flexible_2016}.
 \end{itemize}
+
+\pause
 
 \textbf{R}: a software environment and a programming language \citep{r_core_team_r:_2016}, extensively used in bioinformatics and biostatistics.
 
@@ -157,7 +155,7 @@ Web servers (limited to published web servers):
 Existing software                                                                            & Desired software      \\ \hline
 \begin{tabular}[c]{@{}l@{}}closed-source (vendors), \\ open-source (scientific)\end{tabular} & open-source             \\ \hline
 partially reproducible                                                                       & fully reproducible      \\ \hline
-tied to a specific platform                                                                  & multi-platform          \\ \hline
+tied to a specific dPCR platform                                                                  & multi-platform          \\ \hline
 solving a specific problem                                                                   & focused on common tasks \\ \hline
 scattered                                                                                    & integrated              \\ \hline
 \end{tabular}
@@ -228,8 +226,8 @@ There are no universal format for dPCR data. Each system provides output in a di
 
 dpcReport supports analysis of data in following file formats:
 \begin{itemize}
-\item QX100 (Biorad),
-\item QX200 (Biorad),
+\item QX100 (Bio-Rad),
+\item QX200 (Bio-Rad),
 \item BioMark (Fluidigm).
 \end{itemize}
 
@@ -369,6 +367,8 @@ print(xtable(multi_cmp[-1], digits = 0),
       sanitize.text.function = function(x) x)
 @
 
+\pause
+
 Comparison of multiple runs is one of the most common and crucial tasks in dPCR, but no software does that correctly for you.
 
 \end{frame}
@@ -452,7 +452,9 @@ grid.draw(pp_grobs)
 
 Scientific software must support reproducibility, otherwise it is not scientific.
 
-A report should contain enough information to allow the full reproduction of the conducted analysis.
+\pause
+
+Reports generated with dpcReport contain enough information to allow the full reproduction of the conducted analysis.
 
 \end{frame}
 
@@ -462,14 +464,6 @@ A report should contain enough information to allow the full reproduction of the
 \includegraphics[width=0.95\textwidth]{static_figure/dcpReport_reprod1.png}
 \end{figure}
 \end{frame}
-
-
-\begin{frame}{Date and time}
-\begin{figure} 
-\includegraphics[width=0.95\textwidth]{static_figure/dcpReport_reprod2.png}
-\end{figure}
-\end{frame}
-
 
 \begin{frame}{Input file name}
 \begin{figure} 
@@ -483,7 +477,7 @@ A report should contain enough information to allow the full reproduction of the
 \includegraphics[width=0.95\textwidth]{static_figure/dcpReport_reprod4.png}
 \end{figure}
 
-Changes in case of the manual alteration of the input file.
+A checksum allows detection of different files with the same name.
 
 \end{frame}
 
@@ -491,6 +485,12 @@ Changes in case of the manual alteration of the input file.
 \begin{frame}{Manual alterations inside dpcReport}
 \begin{figure} 
 \includegraphics[width=0.95\textwidth]{static_figure/dcpReport_reprod5.png}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\begin{figure} 
+\includegraphics[width=0.95\textwidth]{static_figure/dcpReport_reprod2.png}
 \end{figure}
 \end{frame}
 
@@ -528,6 +528,7 @@ dpcReport exports all steps of the analysis, including parameters adjusted manua
 \end{figure}
 \end{frame}
 
+\section{Conclusions}
 
 \begin{frame}{Summary}
 \textit{dpcReport} is an open-source, integrated software for the reproducible analysis of dPCR data.
