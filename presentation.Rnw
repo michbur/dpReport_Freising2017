@@ -135,11 +135,24 @@ Scripts and smaller tools tied to very specific task:
 \end{frame}
 
 \begin{frame}{Other dPCR software}
-Web servers (limited to published web servers):
+Web servers:
 
 \begin{itemize}
+\item uCount,
 \item definetherain \citep{jones_low_2014},
-\item ddpcr \citep{attali_ddpcr:_2016} (also the \textbf{R} package),
+\item ddpcr \citep{attali_ddpcr:_2016} (also the \textbf{R} package).
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Other dPCR software}
+Problems addressed:
+
+\begin{itemize}
+\item elimination of the rain,
+\item validity of Poisson assumption,
+\item better estimation of $\lambda$ (mean number of template molecules per partition) and concentration.
 \end{itemize}
 
 \end{frame}
@@ -170,6 +183,59 @@ scattered                                                                       
 \centering
 \begin{tabular}{|l|l|}
 \hline
+Existing software                                                                            & Desired software      \\ \hline
+\begin{tabular}[c]{@{}l@{}}\textcolor{red}{closed-source (vendors)}, \\ \textcolor{red}{open-source (scientific)}\end{tabular} & \textcolor{red}{open-source}             \\ \hline
+partially reproducible                                                                       & fully reproducible      \\ \hline
+tied to a specific dPCR platform                                                                  & multi-platform          \\ \hline
+solving a specific problem                                                                   & focused on common tasks \\ \hline
+scattered                                                                                    & integrated              \\ \hline
+\end{tabular}
+\end{table}
+
+\end{frame}
+
+\begin{frame}{Aim}
+
+\begin{table}
+\centering
+\begin{tabular}{|l|l|}
+\hline
+Existing software                                                                            & Desired software      \\ \hline
+\begin{tabular}[c]{@{}l@{}}closed-source (vendors), \\ open-source (scientific)\end{tabular} & open-source             \\ \hline
+\textcolor{red}{partially reproducible}                                                                       & \textcolor{red}{fully reproducible}      \\ \hline
+tied to a specific dPCR platform                                                                  & multi-platform          \\ \hline
+solving a specific problem                                                                   & focused on common tasks \\ \hline
+scattered                                                                                    & integrated              \\ \hline
+\end{tabular}
+\end{table}
+
+\end{frame}
+
+
+\begin{frame}{Aim}
+
+\begin{table}
+\centering
+\begin{tabular}{|l|l|}
+\hline
+Existing software                                                                            & Desired software      \\ \hline
+\begin{tabular}[c]{@{}l@{}}closed-source (vendors), \\ open-source (scientific)\end{tabular} & open-source             \\ \hline
+partially reproducible                                                                       & fully reproducible      \\ \hline
+\textcolor{red}{tied to a specific dPCR platform}                                                                  & \textcolor{red}{multi-platform}          \\ \hline
+solving a specific problem                                                                   & focused on common tasks \\ \hline
+scattered                                                                                    & integrated              \\ \hline
+\end{tabular}
+\end{table}
+
+\end{frame}
+
+
+\begin{frame}{Aim}
+
+\begin{table}
+\centering
+\begin{tabular}{|l|l|}
+\hline
 Existing software                                                                            &  \textcolor{blue}{dpcReport}     \\ \hline
 \begin{tabular}[c]{@{}l@{}}closed-source (vendors), \\ open-source (scientific)\end{tabular} & open-source             \\ \hline
 partially reproducible                                                                       & fully reproducible      \\ \hline
@@ -180,6 +246,41 @@ scattered                                                                       
 \end{table}
 
 \end{frame}
+
+\begin{frame}{Aim}
+
+\begin{table}
+\centering
+\begin{tabular}{|l|l|}
+\hline
+Existing software                                                                            & Desired software      \\ \hline
+\begin{tabular}[c]{@{}l@{}}closed-source (vendors), \\ open-source (scientific)\end{tabular} & open-source             \\ \hline
+partially reproducible                                                                       & fully reproducible      \\ \hline
+tied to a specific dPCR platform                                                                  & multi-platform          \\ \hline
+\textcolor{red}{solving a specific problem}                                                                   & \textcolor{red}{focused on common tasks} \\ \hline
+scattered                                                                                    & integrated              \\ \hline
+\end{tabular}
+\end{table}
+
+\end{frame}
+
+\begin{frame}{Aim}
+
+\begin{table}
+\centering
+\begin{tabular}{|l|l|}
+\hline
+Existing software                                                                            & Desired software      \\ \hline
+\begin{tabular}[c]{@{}l@{}}closed-source (vendors), \\ open-source (scientific)\end{tabular} & open-source             \\ \hline
+partially reproducible                                                                       & fully reproducible      \\ \hline
+tied to a specific dPCR platform                                                                  & multi-platform          \\ \hline
+solving a specific problem                                                                   & focused on common tasks \\ \hline
+\textcolor{red}{scattered}                                                                                    & \textcolor{red}{integrated}              \\ \hline
+\end{tabular}
+\end{table}
+
+\end{frame}
+
 
 % \begin{frame}{Aim}
 % 
@@ -195,6 +296,21 @@ scattered                                                                       
 % \end{frame}
 
 \section{dpcReport framework}
+
+\begin{frame}{dpcReport framework}
+dpcReport: a web server for dPCR data focused on the estimation of a template concentration in a sample.
+
+\pause
+
+\begin{equation}
+c = \lambda \times v
+\end{equation}
+
+$\lambda$: mean number of template molecules per partition.
+
+$v$: volume of a partition.
+
+\end{frame}
 
 \begin{frame}{dpcReport framework}
 \includegraphics[width=0.90\textwidth]{static_figure/dpcreport_workflow_full.eps}
@@ -229,6 +345,8 @@ dpcReport supports analysis of data in following file formats:
 \item QX100 (Bio-Rad),
 \item QX200 (Bio-Rad),
 \item BioMark (Fluidigm).
+\item raw amplitude data.
+\item REDF.
 \end{itemize}
 
 \end{frame}
@@ -246,6 +364,8 @@ rownames(tmp_dat) <- NULL
 knitr::kable(tmp_dat)
 @
 }
+
+Documentation: \url{http://michbur.github.io/dpcR_manual/}.
 
 \end{frame}
 
@@ -343,7 +463,7 @@ Multiple comparison problem: the more comparisons, the higher chance of the type
 \end{frame}
 
 \begin{frame}{Comparison of multiple runs}
-Solution: False Discovery Rate~\citep{benjamini_controlling_1995} (correction for multiple comparisons).
+Solution: False Discovery Rate~\citep{benjamini_controlling_1995} (correction for multiple comparisons) used by dpcReport~\citep{burdukiewicz_methods_2016}.
 
 <<echo = FALSE, message=FALSE,warning=FALSE,fig.height = 4,results='asis'>>=
 multi_cmp <- ks %>% generate_dat  %>% test_counts() %>% slot("test_res")
@@ -369,7 +489,7 @@ print(xtable(multi_cmp[-1], digits = 0),
 
 \pause
 
-Comparison of multiple runs is one of the most common and crucial tasks in dPCR, but no software does that correctly for you.
+Comparison of multiple runs is one of the most common and crucial tasks in dPCR, but no software does that.
 
 \end{frame}
 
