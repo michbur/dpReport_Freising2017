@@ -303,7 +303,7 @@ dpcReport: a web server for dPCR data focused on the analysis estimation of a te
 \pause
 
 \begin{equation}
-c = \lambda \times v
+c = \frac{\lambda}{v}
 \end{equation}
 
 $\lambda$: mean number of template molecules per partition.
