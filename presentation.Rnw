@@ -236,23 +236,6 @@ scattered                                                                       
 \centering
 \begin{tabular}{|l|l|}
 \hline
-Existing software                                                                            &  \textcolor{blue}{dpcReport}     \\ \hline
-\begin{tabular}[c]{@{}l@{}}closed-source (vendors), \\ open-source (scientific)\end{tabular} & open-source             \\ \hline
-partially reproducible                                                                       & fully reproducible      \\ \hline
-tied to a specific platform                                                                  & multi-platform          \\ \hline
-solving a specific problem                                                                   & focused on common tasks \\ \hline
-scattered                                                                                    & integrated              \\ \hline
-\end{tabular}
-\end{table}
-
-\end{frame}
-
-\begin{frame}{Aim}
-
-\begin{table}
-\centering
-\begin{tabular}{|l|l|}
-\hline
 Existing software                                                                            & Desired software      \\ \hline
 \begin{tabular}[c]{@{}l@{}}closed-source (vendors), \\ open-source (scientific)\end{tabular} & open-source             \\ \hline
 partially reproducible                                                                       & fully reproducible      \\ \hline
@@ -281,6 +264,23 @@ solving a specific problem                                                      
 
 \end{frame}
 
+\begin{frame}{Aim}
+
+\begin{table}
+\centering
+\begin{tabular}{|l|l|}
+\hline
+Existing software                                                                            &  \textcolor{blue}{dpcReport}     \\ \hline
+\begin{tabular}[c]{@{}l@{}}closed-source (vendors), \\ open-source (scientific)\end{tabular} & open-source             \\ \hline
+partially reproducible                                                                       & fully reproducible      \\ \hline
+tied to a specific platform                                                                  & multi-platform          \\ \hline
+solving a specific problem                                                                   & focused on common tasks \\ \hline
+scattered                                                                                    & integrated              \\ \hline
+\end{tabular}
+\end{table}
+
+\end{frame}
+
 
 % \begin{frame}{Aim}
 % 
@@ -298,7 +298,7 @@ solving a specific problem                                                      
 \section{dpcReport framework}
 
 \begin{frame}{dpcReport framework}
-dpcReport: a web server for dPCR data focused on the estimation of a template concentration in a sample.
+dpcReport: a web server for dPCR data focused on the analysis estimation of a template concentration in a sample.
 
 \pause
 
@@ -423,10 +423,10 @@ single_cmp <- data.frame(cbind(rbind(c(15, 14) %>% generate_dat  %>% test_counts
                                      c(32, 29) %>% generate_dat  %>% test_counts() %>% slot("test_res")),
                                k1 = c(15, 15, 15, 29, 32, 32), k2 = c(14, 29, 32, 15, 15, 29))) %>% 
   mutate(nice_p_value = formatC(p_value, format = "f"),
-         k1 = ifelse(k1 %in% c(14, 15), 
+         k1 = ifelse(k1 %in% c(29, 32), 
                      paste0("\\textcolor{my_orange}{", k1, "}"),
                      paste0("\\textcolor{my_blue}{", k1, "}")),
-         k2 = ifelse(k2 %in% c(14, 15), 
+         k2 = ifelse(k2 %in% c(29, 32), 
                      paste0("\\textcolor{my_orange}{", k2, "}"),
                      paste0("\\textcolor{my_blue}{", k2, "}"))) %>% 
   mutate(nice_p_value = ifelse(p_value < 0.05, paste0("\\textcolor{red}{", nice_p_value, "}"), nice_p_value))
@@ -472,10 +472,10 @@ multi_cmp <- ks %>% generate_dat  %>% test_counts() %>% slot("test_res") %>%
         k2 = c(14, 29, 32, 15, 15, 29)) %>% 
   data.frame() %>% 
   mutate(nice_p_value = formatC(p_value, format = "f"),
-         k1 = ifelse(k1 %in% c(14, 15), 
+         k1 = ifelse(k1 %in% c(29, 32), 
                      paste0("\\textcolor{my_orange}{", k1, "}"),
                      paste0("\\textcolor{my_blue}{", k1, "}")),
-         k2 = ifelse(k2 %in% c(14, 15), 
+         k2 = ifelse(k2 %in% c(29, 32), 
                      paste0("\\textcolor{my_orange}{", k2, "}"),
                      paste0("\\textcolor{my_blue}{", k2, "}"))) %>% 
   mutate(nice_p_value = ifelse(p_value < 0.05, paste0("\\textcolor{red}{", nice_p_value, "}"), nice_p_value))
@@ -522,7 +522,7 @@ library(gtable)
 
 real_data_CI <- read.csv("./data/real_data_CI.csv") %>% 
   filter(experiment %in% c(0.05, 0.25, 0.5, 0.75, 1),
-         method != "Bhat") %>% 
+         method != "Dube") %>% 
   mutate(experiment_nice = factor(as.character(experiment_nice), paste0(c(0.05, 0.25, 0.5, 0.75, 1)*100, "%")))
 
 pp <- ggplot(real_data_CI, aes(x = replicate, y = lambda, ymax = lambda.up, ymin = lambda.low, color = covered)) +
@@ -651,7 +651,7 @@ dpcReport exports all steps of the analysis, including parameters adjusted manua
 \section{Conclusions}
 
 \begin{frame}{Summary}
-\textit{dpcReport} is an open-source, integrated software for the reproducible analysis of dPCR data.
+\textit{dpcReport} is an open-source, universal and unified software for the reproducible analysis of dPCR data.
 \end{frame}
 
 \begin{frame}{Getting started}
